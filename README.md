@@ -1,5 +1,3 @@
-본 저장소의 코드는 클래스 101 모든 수업을 마쳤을 때 사용하시는 것을 권장 드립니다. 15챕터를 듣기 전에 받으신 경우 AI챕터에서 배치 파일을 가상환경으로 설정 하기 때문에 콜렉터, 트레이더 배치파일을 기존의 7-1챕터에서 제공드리는 배치파일을 사용하시기 바랍니다. 
-
 ## 사용방법 
 
 - `library/cf.py.bak`을 `cf.py`로 이름 변경 후 *db_ip, db_id, db_passwd, db_port, imi1_accout, imi1_simul_num, start_daily_buy_list, dart_api_key* 값을 본인의 설정에 맞게 변경 하시거나 
