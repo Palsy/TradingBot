@@ -1,0 +1,37 @@
+#### simulator() #######
+self.simul_num : 1
+option : y 	
+self.simul_reset : reset 
+
+
+simulator_func_mysql(1 , reset  , 0)
+
+simul_num = 1
+op = reset
+db_name = 0 
+
+#######simulator_func_mysql() ####
+self.simul_num = 1
+self.op = 'reset'
+self.simul_reset = True
+self.simul_start_date = "20190101"
+self.db_to_realtime_daily_buy_list_num = 1
+self.sell_list_num = 1
+self.start_invest_price = 10000000
+self.invest_unit=1000000
+self.limit_money = 3000000
+self.sell_point = 10
+self.losscut_point = -2
+self.db_name=simulator1
+
+self.engine_simulator= simulator1 database 접속하는 객체 
+self.engine_daily_craw = daily_craw database 접속하는 객체 
+self.engine_craw= ~
+self.db_conn = 특정 데이터 베이스가 아닌, mysql 에 접속하는 객체 
+
+
+self.jango = dataframe 빈껍데기 
+self.df_all_item =dataframe 빈껍데기
+
+self.date_rows=[('20190102',),('20190103',)......]
+self.buy_stop = False

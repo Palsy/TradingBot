@@ -1,0 +1,14 @@
+lxml
+pymysql
+selenium
+numpy
+sqlalchemy
+pandas
+dart_fss
+PyQt5
+cryptography
+
+matplotlib
+sklearn
+tensorflow
+keras

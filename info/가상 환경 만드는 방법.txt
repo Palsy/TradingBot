@@ -1,0 +1,109 @@
+* 가상 환경?
+가상환경(Virtual Environment)이란
+자신이 원하는 Python 환경을 구축하기 위해 필요한 모듈만 담아 놓는 바구니
+각 가상환경은 독립적으로 관리됩니다. 각 모듈은 다른 모듈에 대한 의존성(dependency)이 다르기 때문에
+각 프로젝트 별로 별개의 가상환경을 만들어놓고 사용하는 것을 추천
+
+* 환경 세팅
+- 텐서플로우는 파이썬 64비트에서만 동작, 키움증권 openapi는 파이썬 32비트에서만 동작
+  이를 위해 아나콘다 32비트를 삭제 후 64비트로 설치
+  32비트, 64비트 모두 가상환경을 만들어준다. (32비트 anaconda에서는 64비트 가상환경을 만들 수 없음)
+- 32비트 가상 환경 만드는 명령어
+    > anaconda prompt 실행(64비트 아나콘다)
+    > set CONDA_FORCE_32BIT=1 → 기본 환경(base)을 32비트로 사용하겠다.
+    > conda create -n py37_32 python=3.7 → 가상환경 이름이 py37_32(이름은 자유롭게 설정 가능)이고 python 3.7를 생성
+            **  실습에서는 가상환경 이름을 py37_32로 설정해주세요
+    > Proceed ([y]/n)? 가 끄면 y 누른 후 엔터
+    > activate py37_32 → 가상환경 py37_32 activate(32비트 환경 활성화)
+    > python 입력 시 32비트 메시지가 뜨면 정상 설치 ( 나올 떄는 exit())
+    > conda info --envs → 가상환경 확인 (설치 된 위치가 나옴)
+    > 새롭게 설치된 32비트 파이썬은 아나콘다가 설치된 파이썬 폴더 아래의 envs 폴더 이하에 설치 됩니다.
+     - C:\Users\'사용자명'\anaconda3\envs\py37_32\python.exe
+    > 콘솔 왼쪽에 py37_32 라고 뜬다.
+    > 프롬프트를 껐다가 켜면 다시 base로 돌아온다.
+
+- 64비트 가상 환경 만드는 명령어
+    > set CONDA_FORCE_32BIT=    → 기본 환경(base)을 64비트로 사용하겠다.
+    > conda create -n py37_64 python=3.7 → 가상환경 이름이 py37_64 이고 python 3.7를 생성
+    > Proceed ([y]/n)? 가 끄면 y 누른 후 엔터
+    > activate py37_64 → 가상환경 py37_64 activate(64비트 환경 활성화)
+    > python 입력 시 64비트 메시지가 뜨면 정상 설치 ( 나올 떄는 exit())
+    > conda info --envs → 가상환경 확인  (설치 된 위치가 나옴)
+    > 새롭게 설치된 64비트 파이썬은 아나콘다가 설치된 파이썬 폴더 아래의 envs 폴더 이하에 설치 됩니다.
+     - C:\Users\'사용자명'\anaconda3\envs\py37_64\python.exe
+    > 콘솔 왼쪽에 py37_64 라고 뜬다.
+    > 프롬프트를 껐다가 켜면 다시 base로 돌아온다.
+
+- 가상환경 삭제하는 방법
+    > 32비트 : conda remove --name py37_32 --all
+    > 64비트 : conda remove --name py37_64 --all
+
+- 라이브러리 설치 되는 위치 (pip install 라이브러리)
+    > 32비트 : C:\Users\'사용자명'\anaconda3\envs\py37_32\Lib\site-packages
+    > 64비트 : C:\Users\'사용자명'\anaconda3\envs\py37_64\Lib\site-packages
+    =>> 이렇게 라이브러리들이 독립적으로 관리가 되기 때문에 관리가 편리
+
+- pycharm에서 가상환경 32비트, 64비트 적용 하는 방법
+    - ctrl+alt+s -> python interpreter -> 톱니바퀴 -> add -> conda environment -> existing_environment에서 아래 두개 환경 등록
+        C:\Users\jake\anaconda3\envs\py37_32
+        C:\Users\jake\anaconda3\envs\py37_64
+
+- pycharm에서 가상환경 32비트, 64비트 선택 하는 방법
+    - 방법1) ctrl+alt+s -> project interpreter 에서 원하는 환경 선택
+    - 방법2) 재생(Run)버튼 왼쪽 프로그램 목록 ->
+             -> edit configurations
+             -> python interperter 에서 파일에 맞는 환경 선택(목록에 없는 경우, 한번 실행하면 목록에 뜸)
+             -> Save Configuration
+             -> 한번 설정 해놓으면, 해당 파일을 실행 할 때는 지정해놓은 interpreter 환경에서 동작
+
+- requirements.txt : 현재 환경에 설치된 라이브러리 목록
+    pycharm -> Terminal 클릭 (anaconda prompt 와 동일한 터미널, 디렉토리 위치만 다름)
+        * (py37_32) or (py37_64) 가 왼쪽에 뜨는지 확인. 뜨지 않는다면 터미널을 껐다가 재실행
+        ** pycharm에서 인터프리터를 변경 시 Terminal을 껐다가 켜야 적용이 됨
+
+    현재 환경에 라이브러리 목록 설치 : pip install -r requirements.txt (bot 디렉토리에서 실행을 해야함)
+
+    ** requirements_32.txt : 32비트 환경에서 봇에 필요한 라이브러리 정리
+        설치 : pip install -r requirements_32.txt
+    ** requirements_64.txt : 64비트 환경에서 봇에 필요한 라이브러리 정리
+        설치 : pip install -r requirements_64.txt
+
+* 시뮬레이션 TIP
+    * 개발 진행 하며 여러 시뮬레이션을 돌리고 싶은 경우
+    => pycharm Terminal을 여러개 띄울 수 있음
+    => AI알고리즘의 경우 : "activate py37_64" 명령어 입력 하여 64비트 환경에서 테스트
+    => AI알고리즘이 아닌 경우 : (py37_64), (py37_32) 무관
+    => 콜렉터, 트레이더 :  "activate py37_32" 명령어 입력 하여 32비트 환경에서 테스트
+
+-수정 해야 할 부분 : collector, trader 배치 파일을 돌릴 때 32비트 가상환경에서 동작하도록 설정
+    [collector.bat]
+     - as-is : call "C:\ProgramData\Anaconda3\Scripts\activate.bat" C:\ProgramData\Anaconda3
+     - to-be:  call "%HOMEPATH%\Anaconda3\Scripts\activate.bat" py37_32
+
+    [trader.bat]
+     - as-is : call "C:\ProgramData\Anaconda3\Scripts\activate.bat" C:\ProgramData\Anaconda3
+     - to-be:  call "%HOMEPATH%\Anaconda3\Scripts\activate.bat" py37_32
+
+* 배치파일 TIP
+ 배치파일 실행 시 콘솔창이 꺼졌다 켜졌다 하는 경우
+    => 에러가 있을 경우 이러 현상 발생.
+    => pycharm으로 콜렉터를 실행 한 뒤 에러로그를 확인
+    => pycharm에서 동작에 문제가 없을 시 배치파일 아래에
+        start python %~dp0/../collector_v3.py
+        부분의 start를 임시로 call로 변경하면 에러로그 확인 가능(콘솔창이 켜진 상태로 유지)
+        에러 수정 후 다시 start로 변경해야함
+
+- 주의!
+64비트 환경에서 콜렉터를 돌리면
+'open_api' object has no attribute 'OnEventConnect'
+에러가 발생.
+
+- 정리 => openapi를 사용하지 않는 프로그램은 모두 64비트에서도 돌아간다.
+    * 32비트 환경 : 키움증권 openapi를 활용하는 프로그램
+        - trader.py , collector_v3.py
+    * 64비트 환경 : 알고리즘에 AI 를 사용하는 경우 (self.use_ai = True)
+        - 시뮬레이터의 경우 AI를 사용하지 않으면 32비트, 64비트 모두 가능, AI를 사용하면 64비트만 가능
+
+    ** 정상 동작 테스트
+          -trader배치파일, collector배치파일
+          -collector_v3.py, simulator.py, trader.py, ai/ex1.py

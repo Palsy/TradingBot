@@ -1,0 +1,248 @@
+[ETF(상장지수펀드)]
+   - 주식시장에서 거래가 가능한, 거래 목적의 투자신탁 상품이다. ETF는 주식, 원자재, 채권 등 자산으로 구성
+   - KOSPI, KOSDAQ 와 같은 특정 지수 또는 금, 채권, 원유와 같은 특정 자산가격의 움직임에 따라 수익율이 연동되도록 설계한 상품
+   - 거래소에 상장되어 주식처럼 거래되는 펀드
+   - 개별 주식을 직접 사고 파는 것이 아닌 주식의 묶음을 사는 것
+   - 국내 주식형 ETF는 매매시 거래세 면제
+   - 개별 주식에 비해 안정적
+
+[대표적인 ETF]
+▶ KODEX란
+    - 상장지수펀드, KOSPI200, 벤처지수와 같은 특정한 주가지수의 수익률을 얻을 수 있도록
+        설계된 지수로 발행하였으며 코스피에 상장, 유통되고 있으며 거래방법은 일반 주식과 동일한 방식으로 매매
+    - 삼성자산운용의 ETF 브랜드
+
+▶ KODEX200
+    - 코스피200 지수의 변동률과 유사하게 운용 하는 펀드
+        ** 코스피 지수
+            - 한국증권거래소에 상장되어 거래되는 모든 주식의 시가총액을 합쳐서 주식시장 전체 장세의 흐름을 나타내는 지수
+            - 계산 = (현재 시가총액 합 / 1980년 기준 시가총액 합) * 100
+        ** 코스피 200 지수
+            - 증권 거래소에 상장되어있는 기업 중 코스피 전체 종목을 산업군으로 분류하여 시가총액과 거래량 비중이 높은 종목들 상위 200위 우선 선정
+            - 시장 대표성, 유동성, 업종 대표성을 고려하여 선정
+            - 변동성이 적다
+
+▶ KODEX레버리지
+    - 주가보다 2배 더 탄력있게 매일매일 KOSPI200 지수의 일간등락율을 2배씩 추적하는 레버리지 ETF
+    - 기초지수가 일간 1% 상승 시 KODEX레버리지는 2% 상승 추구
+    - KOSPI200을 추종하지만 등락율에 따라 수익이 두배가 될 수도, 손해가 2배가 될 수 있다.
+    - ETF 상품 중에서 가장 공격적인 상품
+    - 레버리지 관련 상품 검색 : select * from stock_etf where code_name like '%레버리지%'
+
+▶ KODEX인버스
+    - 사장이 하락하면 수익이 나는 기초지수(F-KOSPI200)의 일별수익률을 역방향으로 추적하는 ETF
+    - 기초지수가 일간 -1% 하락 시 KODEX인버스는 +1% 상승 추구한다.
+    - 인버스는 '반대', '역수'라는 뜻
+    - 인버스 KODEX ETF는 KODEX ETF의 반대 개념
+    - 인버스 ETF의 경우 코스피200의 지수가 올라갈 때가 아닌 반대로 떨어질 때 수익이 나는 ETF.
+    - 코스피200이 3% 떨어졌다면 인버스는 3%수익
+    - 인버스 관련 상품 검색 : select * from stock_etf where code_name like '%인버스%'
+
+▶접두어 : 상품운용사
+    - KODEX ~ : 삼성자산운용 상품
+    - TIGER ~ : 미래에셋자산운용 상품
+    - KBSTAR ~ : KB자산운용
+    - ARIRANG ~ : 한화자산운용
+    - KINDER ~ : 한국투자신탁운용
+    - KOSEF ~ : 키움투자자산운용
+
+▶접미어 : 상품 종류
+    - ~ 200 : KOSPI 200 지수의 일간 변동률을 유사하게 추종
+    - ~ 인버스 : KOSPI 200 선물지수 일간 변동률의 -1 배수와 유사하게 추종
+    - ~ 레버리지 : KOSPI 200 선물지수 일간변동률의 2배수와 유사하게 추종
+    - ~ 코스닥150 : KOSDAQ 150 지수의 변동률을 유사하게 추종
+    - ~ 기계장비, 건설 등 : 해당 대표 업종들로 구성된 지수의 변동률을 유사하게 추종
+    - ~ 차이나, 미국 등 : 각 국가의 특정 지수의 변동률을 유사하게 추종
+
+
+
+[적용 방법]
+** 버전 확인 **
+ - 1.3.1 이상 : library / daily_buy_list.py,  open_api.py, simulator_func_mysql.py [4챕터 종목리스트 저장하기]
+ - 1.3.1 이상 : trader.py [7챕터 윈도우 배치파일, 작업 스케줄러를 활용해 자동 봇 실행 파일 만들기]
+-  1.3.2 이상 : library / collector_api.py [4챕터 종목리스트 저장하기]
+    collector_api.py 파일 변경 시 아래 4개 주석 해제
+   1) # from kind_crawling import *
+   2) # self.kind = KINDCrawler()
+   3) # self.kind.craw()
+   4)  # # AI 알고리즘 적용
+        # if self.open_api.sf.use_ai:
+        #     path = pathlib.Path(__file__).parent.parent.absolute() / 'bat' / 'ai_filter.bat'
+        #     os.system(f"start {path} {self.open_api.db_name} {self.open_api.simul_num}")
+
+
+1. cf파일의 use_etf = True로 변경
+
+2. daily_buy_list의 날짜 테이블을 모두 삭제 해야한다.
+   => 현재 trader.py를 돌리고 계신 분들은 주말에 몰아서 daily_buy_list를 받는 것을 추천 드립니다.
+   (시간이 너무 오래걸리면 cf 파일에서 start_daily_buy_list 변수의 날짜를 최근으로 변경해서 차근 차근 받는 방법도 있습니다)
+
+3. 이후에 콜렉터를 돌리면 (code_update, daily_crawler, min_crawler, today_buy_list 컬럼 모두 0 넣기)
+daily_buy_list DB의 stock_item_all 테이블에 etf종목들이 추가가 된다.
+
+4. daily_buy_list DB에 stock_etf 테이블이 추가가 된다.
+
+5. simulator_func_mysql.py 에서 매수함수(db_to_realtime_daily_buy_list)
+에 기존에 있던 알고리즘들에 not exist stock_etf를 추가해줘야한다.
+  ex ) "AND NOT exists (SELECT null FROM stock_etf b WHERE YES_DAY.code=b.code)" \
+
+6. 새롭게 추가 할 알고리즘에 만약 stock_etf만 사용을 할 경우.
+ ex)
+ sql = "SELECT * FROM `" + date_rows_yesterday +"` YES_DAY " \
+                       "WHERE exists (SELECT null FROM stock_etf ETF WHERE YES_DAY.code=ETF.code) " \
+
+7. 새롭게 추가 할 알고리즘에 만약 stock_kospi, stock_etf 만 사용을 하겠다.
+ex)
+ sql = f"SELECT * FROM `{date_rows_yesterday}` YES_DAY " \
+                  f"WHERE (exists (SELECT null FROM stock_kospi KOSPI " \
+                  f"WHERE YES_DAY.code=KOSPI.code) " \
+                  f"OR exists (SELECT null FROM stock_etf ETF " \
+                  f"WHERE YES_DAY.code=ETF.code))"
+
+-> not exist는 and로 연결, exist는 or로 연결
+(exist를 사용 시 and로 하게 되면 etf에도 존재하고 kospi에도 존재하는 종목은 0개 이기 때문)
+
+
+
+
+
+알고리즘 추가
+
+[variable_setting]
+16번 알고리즘 추가
+
+        if self.simul_num in (1, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16):
+            # 시뮬레이팅 시작 일자(분 별 시뮬레이션의 경우 최근 1년 치 데이터만 있기 때문에 start_date 조정 필요)
+            self.simul_start_date = "20200611"
+
+            ######### 알고리즘 선택 #############
+            # 매수 리스트 설정 알고리즘 번호
+            self.db_to_realtime_daily_buy_list_num = 1
+
+            # 매도 리스트 설정 알고리즘 번호
+            self.sell_list_num = 1
+            ###################################
+
+            # 초기 투자자금(시뮬레이션에서의 초기 투자 금액. 모의투자는 신청 당시의 금액이 초기 투자 금액이라고 보시면 됩니다)
+            # 주의! start_invest_price 는 모의투자 초기 자본금과 별개. 시뮬레이션에서만 적용.
+            # 키움증권 모의투자의 경우 초기에 모의투자 신청 할 때 설정 한 금액으로 자본금이 설정됨
+            self.start_invest_price = 10000000
+
+            # 매수 금액
+            self.invest_unit = 1000000
+
+            # 자산 중 최소로 남겨 둘 금액
+            self.limit_money = 3000000
+
+            # 익절 수익률 기준치
+            self.sell_point = 10
+
+            # 손절 수익률 기준치
+            self.losscut_point = -2
+
+            # 실전/모의 봇 돌릴 때 매수하는 순간 종목의 최신 종가 보다 1% 이상 오른 경우 사지 않도록 하는 설정(변경 가능)
+            self.invest_limit_rate = 100
+            # 실전/모의 봇 돌릴 때 매수하는 순간 종목의 최신 종가 보다 -2% 이하로 떨어진 경우 사지 않도록 하는 설정(변경 가능)
+            self.invest_min_limit_rate = -100
+
+            if self.simul_num == 4:
+                self.db_to_realtime_daily_buy_list_num = 4
+                self.interval_month = 3
+                self.invest_unit = 50000
+
+            elif self.simul_num == 5:
+                self.db_to_realtime_daily_buy_list_num = 5
+                self.total_transaction_price = 10000000000
+                self.interval_month = 3
+                self.vol_mul = 3
+                self.d1_diff = 2
+                # self.use_min= True
+                # self.only_nine_buy = False
+
+            elif self.simul_num == 6:
+                self.db_to_realtime_daily_buy_list_num = 6
+
+            # 절대 모멘텀 / 상대 모멘텀
+            elif self.simul_num in (7, 8, 9, 10):
+                # 매수 리스트 설정 알고리즘 번호(절대모멘텀 code ver)
+                self.db_to_realtime_daily_buy_list_num = 7
+                # 매도 리스트 설정 알고리즘 번호(절대모멘텀 code ver)
+
+                self.sell_list_num = 4
+                # n일 전 종가 데이터를 가져올지 설정 (ex. 20 -> 장이 열리는 날 기준 20일 이니까 기간으로 보면 약 한 달, 250일->1년)
+                self.day_before = 20  # 단위 일
+                # n일 전 종가 대비 현재 종가(현재가)가 몇 프로 증가 했을 때 매수, 몇 프로 떨어졌을 때 매도 할 지 설정(0으로 설정 시 단순히 증가 했을 때 매수, 감소 했을 때 매도)
+                self.diff_point = 1  # 단위 %
+                # 분별 시뮬레이션 옵션
+                self.use_min = True
+                self.only_nine_buy = True
+
+                if self.simul_num == 8:
+                    # 매수 리스트 설정 알고리즘 번호 (절대모멘텀 query ver)
+                    self.db_to_realtime_daily_buy_list_num = 8
+                    # 매도 리스트 설정 알고리즘 번호 (절대모멘텀 query ver)
+                    self.sell_list_num = 5
+
+                elif self.simul_num == 9:
+                    # 매수 리스트 설정 알고리즘 번호 (절대모멘텀 query ver)
+                    self.db_to_realtime_daily_buy_list_num = 8
+                    # 매도 리스트 설정 알고리즘 번호 (절대모멘텀 query ver + losscut point 추가)
+                    self.sell_list_num = 6
+                    # 손절 수익률 기준치
+                    self.losscut_point = -2
+
+                elif self.simul_num == 10:
+                    # 매수 리스트 설정 알고리즘 번호 (상대모멘텀 query ver)
+                    self.db_to_realtime_daily_buy_list_num = 9
+                    # 매도 리스트 설정 알고리즘 번호 (절대모멘텀 query ver + losscut point 추가)
+                    self.sell_list_num = 5
+
+            elif self.simul_num == 11:
+                self.use_ai = True  # ai 알고리즘 사용 시 True 사용 안하면 False
+                self.ai_filter_num = 1  # ai 알고리즘 선택
+
+            # 실시간 조건 매수
+            elif self.simul_num in (12, 13, 14):
+                self.simul_start_date = "20200101"
+                self.use_min = True
+                # 아침 9시에만 매수를 하고 싶은 경우 True, 9시가 아니어도 매수를 하고 싶은 경우 False(분별 시뮬레이션, trader 적용 가능 / 일별 시뮬레이션은 9시에만 매수, 매도)
+                self.only_nine_buy = False
+                # 실시간 조건 매수 옵션 (고급 챕터에서 소개) self.only_nine_buy 옵션을 반드시 False로 설정해야함
+                self.trade_check_num = 1  # 실시간 조건 매수 알고리즘 선택 (1,2,3..)
+                # 특정 거래대금 보다 x배 이상 증가 할 경우 매수
+                self.volume_up = 2
+                #
+                if self.simul_num == 13:
+                    self.trade_check_num = 2
+                    # 매수하는 순간 종목의 최신 종가 보다 1% 이상 오른 경우 사지 않도록 하는 설정(변경 가능)
+                    self.invest_limit_rate = 1.01
+                    # 매수하는 순간 종목의 최신 종가 보다 -2% 이하로 떨어진 경우 사지 않도록 하는 설정(변경 가능)
+                    self.invest_min_limit_rate = 0.98
+
+                # 래리윌리엄스 변동성 돌파 전략
+                elif self.simul_num == 14:
+                    self.trade_check_num = 3
+                    self.rarry_k = 0.5
+
+            elif self.simul_num == 15:
+                # 하루에 한번 매수 여부
+                self.only_nine_buy = True
+                # naver crawling 사용 여부
+                self.use_realtime_crawl = True
+                # naver crawling 매수 알고리즘
+                self.db_to_realtime_daily_buy_list_num = 10
+                # 매수 시작 시간
+                self.buy_start_time = QTime(9, 30, 0)
+                # 거래대금
+                self.total_tr_price = 1000000000
+            elif self.simul_num == 16:
+                self.db_to_realtime_daily_buy_list_num = 11
+
+[db_to_realtime_daily_buy_list 함수]
+     elif self.db_to_realtime_daily_buy_list_num == 11:
+            sql = f"SELECT * from `{date_rows_yesterday}` YES_DAY " \
+                  "WHERE yes_clo20 > yes_clo5 and clo5 > clo20 " \
+                    "AND EXISTS (SELECT null FROM stock_etf ETF WHERE YES_DAY.code=ETF.code) " \
+                    f"AND close < {self.invest_unit} " \
+                    "GROUP BY code"
+            realtime_daily_buy_list = self.engine_daily_buy_list.execute(sql).fetchall()

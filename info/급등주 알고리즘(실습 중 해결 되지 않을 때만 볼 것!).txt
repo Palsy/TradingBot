@@ -1,0 +1,89 @@
+select code_name, volume, vol20, volume * close from `20200102`
+where volume * close > 10000000000
+and vol20 * 3 < volume
+and d1_diff_rate > 2
+order by volume * close desc
+
+
+
+
+
+
+
+
+
+
+
+
+# 매수함수
+#         elif self.db_to_realtime_daily_buy_list_num == 5:
+#             sql = "select * from `" + date_rows_yesterday + "` a " \
+#                     "where yes_clo20 > yes_clo5 and clo5 > clo20 " \
+#                     "and volume * close > '%s' " \
+#                     "and vol20 * '%s' < volume " \
+#                     "and d1_diff_rate > '%s' " \
+#                     "and NOT exists (select null from stock_konex b where a.code=b.code)" \
+#                     "and NOT exists (select null from stock_managing c where a.code=c.code and c.code_name != '' group by c.code) " \
+#                     "and NOT exists (select null from stock_insincerity d where a.code=d.code and d.code_name !='' group by d.code) " \
+#                     "and NOT exists (select null from stock_invest_caution e where a.code=e.code and DATE_SUB('%s', INTERVAL '%s' MONTH ) < e.post_date and e.post_date < Date('%s') and e.type != '투자경고 지정해제' group by e.code)"\
+#                     "and NOT exists (select null from stock_invest_warning f where a.code=f.code and f.post_date <= DATE('%s') and (f.cleared_date > DATE('%s') or f.cleared_date is null) group by f.code)"\
+#                     "and NOT exists (select null from stock_invest_danger g where a.code=g.code and g.post_date <= DATE('%s') and (g.cleared_date > DATE('%s') or g.cleared_date is null) group by g.code)"\
+#                     "and a.close < '%s'" \
+#                     "order by volume * close desc"
+#             realtime_daily_buy_list = self.engine_daily_buy_list.execute(sql % (self.total_transaction_price,self.vol_mul, self.d1_diff , date_rows_yesterday, self.interval_month, date_rows_yesterday,date_rows_yesterday ,date_rows_yesterday,date_rows_yesterday,date_rows_yesterday, self.invest_unit)).fetchall()
+
+
+
+
+
+# 변수 설정 함수
+
+#         if self.simul_num in (1, 4, 5):
+#             # 시뮬레이팅 시작 일자
+#             self.simul_start_date = "20190101"
+#
+#             ######### 알고리즘 선택 #############
+#             # 매수 리스트 설정 알고리즘 번호
+#             self.db_to_realtime_daily_buy_list_num = 1
+#
+#             # 매도 리스트 설정 알고리즘 번호
+#             self.sell_list_num = 1
+#             ###################################
+#
+#             # 초기 투자자금
+#             self.start_invest_price = 10000000
+#
+#             # 매수 금액
+#             self.invest_unit = 1000000
+#
+#             # 자산 중 최소로 남겨 둘 금액
+#             self.limit_money = 3000000
+#
+#             # 익절 수익률 기준치
+#             self.sell_point = 10
+#
+#             # 손절 수익률 기준치
+#             self.losscut_point = -2
+#
+#             # 실전/모의 봇 돌릴 때 매수하는 순간 종목의 최신 종가 보다 1% 이상 오른 경우 사지 않도록 하는 설정(변경 가능)
+#             self.invest_limit_rate = 1.01
+#             # 실전/모의 봇 돌릴 때 매수하는 순간 종목의 최신 종가 보다 -2% 이하로 떨어진 경우 사지 않도록 하는 설정(변경 가능)
+#             self.invest_min_limit_rate = 0.98
+#
+#             if self.simul_num == 4:
+#                 self.db_to_realtime_daily_buy_list_num = 4
+#                 self.interval_month = 3
+#                 self.invest_unit = 50000
+#
+#             elif self.simul_num == 5:
+#                 self.db_to_realtime_daily_buy_list_num = 5
+#                 self.total_transaction_price = 10000000000
+#                 self.interval_month = 3
+#                 self.vol_mul = 3
+#                 self.d1_diff = 2
+#                 # self.use_min= True
+#                 # self.only_nine_buy = False
+
+
+
+

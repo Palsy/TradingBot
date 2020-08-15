@@ -1,0 +1,256 @@
+# PER(Price Earning Ratio : 주가수익배율)
+#   - 주가를 주당순이익(EPS)으로 나눈 수치
+#   - 주가가 주당순이익의 몇 배인가를 의미
+#   - 계산법
+#      *방법1) PER = 주가 / 주당순이익
+#      *방법2) PER = 시가 총액 / 연간 순이익
+#           ex1) 시가총액 1000억(A기업), 순이익이 100억 -> PER : 10(배)
+#           ex2) 시가총액 500억(B기업), 순이익 100억 -> PER : 5(배)
+            #   - PER가 5배라면 5년간의 순이익만으로 투자원금을 회수할 수 있다는 뜻
+            #   - 투자수익률로 환산하면 연간 20%
+#   - 절대기준은 아니지만 일반적으로 PER비율이 낮으면(저PER 주) 가치대비 주가가 싸다는 뜻
+
+# PBR(Price to Book Ratio : 주가순자산비율)
+#   - 계산법
+#      *방법1) PBR = 주가 / 주당순자산
+#      *방법2) PBR = 시가총액 / 순자산
+#             ex1)  시가총액 1000억(A기업), 순자산 1000억 -> PBR : 1(배)
+#             ex2)  시가총액 1000억(B기업), 순자산 100억 -> PBR : 10(배)
+#   - 기업의 순자산대비에 시가총액이 몇 배 인지를 의미
+#   - 기업의 자산 : 부채 + 자본(순자산)
+#   - 순자산 : 자산 - 부채
+#   - PBR 역시 PER와 마찬가지로, 낮은 수치를 형성할수록 주가가 싼 것으로 받아들여진다.
+
+# 주의 ! : 낮은 PER와 PBR을 가진 주식이 항상 투자가치가 높은 주식으로 평가받는 것은 아니다. 단순히 보조지표로서 활용하는 것을 권장
+
+
+# 시뮬레이팅 테스트 (저PER, 저PBR 우선 순위 매매)
+# PER, PBR이 낮은 것을 우선 순위를 두고 매매하는 예제
+# -> PER + PBR 결과 오름차순 정렬
+
+# 1단계: dart 테이블에 지표 데이터가 있는지 naver에 있는지 찾는다
+select * from dart;
+
+select * from naver;
+
+# 2단계: 원하는 데이터를 추출 한다
+# 2-1 : 특정 연도를 가져와본다
+select * from naver
+WHERE year = '2019' ;
+
+# 2-2 : label 로 구분을 한다.
+select * from naver
+WHERE year = '2019'
+and label in ('PER(배)', 'PBR(배)');
+
+# 2-3 : 필요 없는 데이터를 필터링한다
+select * from naver
+WHERE year = '2019'
+and label in ('PER(배)', 'PBR(배)')
+and value is not null and value != 0;
+
+
+# 2-4 : 데이터를 가공한다.
+# GROUP BY :  데이터들을 원하는 그룹으로 나눌 수 있다.
+# AS : 별명 (컬럼명)
+select *, sum(value) as sum_value, count(*) as ct from naver
+WHERE year = '2019'
+and label in ('PER(배)', 'PBR(배)')
+and value is not null and value != 0
+group by code;
+
+# 2-5 가공 된 데이터를 다시 필터링
+# # HAVING : GROUP BY 절에 의한 소그룹별로 만들어진 집계 데이터 중,
+# #           HAVING 절에서 제한 조건을 두어 조건을 만족하는 내용만 출력
+# #           HAVING 절은 일반적으로 GROUP BY 절 뒤에 위치한다.
+select *, sum(value) as sum_value, count(*) as ct from naver
+WHERE year = '2019'
+and label in ('PER(배)', 'PBR(배)')
+and value is not null and value != 0
+group by code
+having ct = 2;
+
+
+# 3단계 원하는 방식으로 정렬을 한다
+# order by 컬럼명: 오름차순
+# order by 컬럼명 desc : 내림차순
+select code_name, sum(value) as sum_value, count(*) as ct
+from naver
+WHERE year = '2019'
+and label in ('PER(배)', 'PBR(배)')
+and value is not null and value != 0
+group by code
+having ct = 2
+order by sum_value;
+
+
+
+
+# 4단계 JOIN (daily_buy_list의 날짜 테이블과 합친다)
+# 4-1 : 일단 날짜 테이블을 아무거나 선택해본다.
+# 쿼리문은 대문자로 쓰는게 눈에 더 잘띔
+SELECT * FROM `20200203` ;
+
+# 4-2 : 서브쿼리를 활용한다.
+# 서브쿼리: 하나의 SQL 문에 포함되어 있는 또 다른 SQL 문
+# 아래 결과는 4단계 결과와 동일 -> 즉 4단계 결과를 하나의 테이블(ex. PERPBR)로 생각하면 쉽다
+SELECT * FROM (SELECT code_name, code, year, sum(value) AS sum_value, count(*) AS ct FROM naver
+WHERE year = '2019' AND label IN ('PER(배)', 'PBR(배)')
+AND value IS NOT NULL AND value != 0
+GROUP BY code
+HAVING ct = 2
+ORDER BY sum_value) PERPBR
+;
+
+
+# 4-3
+# JOIN을 해본다. 이 때 5-1결과와 5-2결과가 엮어 진다.
+# `20200203` 테이블의 별명은 a 로 지어주었다.
+# WHERE 절에서 DAILY.code와 PERPBR.code 로 묶어준다.
+# 결과의 끝에 보면 기존에 daily_buy_list 테이블에는 없었던 컬럼들이 생긴것을 볼 수 있다. (5-1과 비교)
+# WHERE 절 위치 주의! 서브쿼리 안의 WHERE절과 혼동 해서는 안됨
+SELECT * FROM `20200203` a, (SELECT code_name, code, year, sum(value) AS sum_value, count(*) AS ct FROM naver
+WHERE year = '2019' AND label IN ('PER(배)', 'PBR(배)')
+AND value IS NOT NULL AND value != 0
+GROUP BY code
+HAVING ct = 2
+ORDER BY sum_value) PERPBR
+WHERE a.code = PERPBR.code
+;
+
+# 5단계 : 종가가 invest_unit 을 넘는 종목은 제외
+SELECT * FROM `20200203` a,(SELECT code_name, code, year, sum(value) AS sum_value, count(*) AS ct FROM naver
+WHERE year = '2019' AND label IN ('PER(배)', 'PBR(배)')
+AND value IS NOT NULL AND value != 0
+GROUP BY code
+HAVING ct = 2
+ORDER BY sum_value) PERPBR
+WHERE a.code = PERPBR.code AND a.close < 100000
+;
+
+
+
+
+# 6단계 : limit을 활용할 수 있다.
+# ex ) limit 100 -> 정렬 순으로 100개만 산출
+SELECT a.* FROM `20200203` a,(SELECT code_name, code, year, sum(value) AS sum_value, count(*) AS ct FROM naver
+WHERE year = '2019' AND label IN ('PER(배)', 'PBR(배)')
+AND value IS NOT NULL AND value != 0
+GROUP BY code
+HAVING ct = 2
+ORDER BY sum_value) PERPBR
+WHERE a.code = PERPBR.code AND a.close < 100000
+LIMIT 100
+;
+
+# 7단계 매수 함수에 적용!
+
+# TIP1) pycharm에서 쿼리 에러 발생 시 콘솔에 찍혀 있는
+#  쿼리문을 그대로 가져와서 실행 해보면 에러 구문을 금방 찾는다
+SELECT a.* FROM `20190102` a,(SELECT code_name, code, year, sum(value) AS sum_value, count(*) AS ct FROM naver WHERE year = '2018' AND label IN ('PER(배)', 'PBR(배)') AND value IS NOT NULL AND value != 0 GROUP BY code HAVING ct = 2 ORDER BY sum_value) PERPBR WHERE a.code = PERPBR.code AND a.close < '100000' LIMIT 100
+# TIP2) invest_unit 을 적게 잡으면 더 많은 종목을 매수
+# TIP3) 이전에 짜놓은 쿼리문들과 합치는 방법
+
+# 합칠 대상 쿼리 예시
+select * from `20200203` a
+where yes_clo20 > yes_clo5 and clo5 > clo20
+and NOT exists (select null from stock_konex b where a.code=b.code)
+and NOT exists (select null from stock_managing c where a.code=c.code and c.code_name != '' group by c.code)
+and NOT exists (select null from stock_insincerity d where a.code=d.code and d.code_name !='' group by d.code)
+and NOT exists (select null from stock_invest_caution e where a.code=e.code and DATE_SUB(20200203, INTERVAL 3 MONTH ) < e.post_date and e.post_date < Date(20200203) and e.type != '투자경고 지정해제' group by e.code)
+and NOT exists (select null from stock_invest_warning f where a.code=f.code and f.post_date <= DATE(20200203) and (f.cleared_date > DATE(20200203) or f.cleared_date is null) group by f.code)
+and NOT exists (select null from stock_invest_danger g where a.code=g.code and g.post_date <= DATE(20200203) and (g.cleared_date > DATE(20200203) or g.cleared_date is null) group by g.code)
+and a.close < 50000;
+
+
+
+
+# 6단계 쿼리와, 위의 예시 쿼리를 합친 결과
+SELECT a.* FROM `20200203` a,(SELECT code_name, code, year, sum(value) AS sum_value, count(*) AS ct FROM naver
+WHERE year = '2019' AND label IN ('PER(배)', 'PBR(배)')
+AND value IS NOT NULL AND value != 0
+GROUP BY code
+HAVING ct = 2
+ORDER BY sum_value) PERPBR
+WHERE a.code = PERPBR.code AND yes_clo20 > yes_clo5 and clo5 > clo20
+and NOT exists (select null from stock_konex b where a.code=b.code)
+and NOT exists (select null from stock_managing c where a.code=c.code and c.code_name != '' group by c.code)
+and NOT exists (select null from stock_insincerity d where a.code=d.code and d.code_name !='' group by d.code)
+and NOT exists (select null from stock_invest_caution e where a.code=e.code and DATE_SUB(20200203, INTERVAL 3 MONTH ) < e.post_date and e.post_date < Date(20200203) and e.type != '투자경고 지정해제' group by e.code)
+and NOT exists (select null from stock_invest_warning f where a.code=f.code and f.post_date <= DATE(20200203) and (f.cleared_date > DATE(20200203) or f.cleared_date is null) group by f.code)
+and NOT exists (select null from stock_invest_danger g where a.code=g.code and g.post_date <= DATE(20200203) and (g.cleared_date > DATE(20200203) or g.cleared_date is null) group by g.code)
+and a.close < 50000;
+
+
+
+
+
+
+
+# 매수함수
+#    elif self.db_to_realtime_daily_buy_list_num == 6:
+#             year_temp = str(int(date_rows_yesterday[0:4])-1)
+#             sql = "SELECT a.* FROM `" + date_rows_yesterday + "` a,(SELECT code_name, code, year, sum(value) AS sum_value, count(*) AS ct FROM naver "\
+#                     "WHERE year = '%s' AND label IN ('PER(배)', 'PBR(배)') "\
+#                     "AND value IS NOT NULL AND value != 0 "\
+#                     "GROUP BY code "\
+#                     "HAVING ct = 2 "\
+#                     "ORDER BY sum_value) PERPBR "\
+#                     "WHERE a.code = PERPBR.code AND a.close < '%s' "\
+#                     "LIMIT 100"
+#             realtime_daily_buy_list = self.engine_daily_buy_list.execute(sql % (year_temp,self.invest_unit)).fetchall()
+
+
+
+
+
+
+# 변수 설정 함수
+
+#         if self.simul_num in (1, 4, 5, 6):
+#             # 시뮬레이팅 시작 일자
+#             self.simul_start_date = "20190101"
+#
+#             ######### 알고리즘 선택 #############
+#             # 매수 리스트 설정 알고리즘 번호
+#             self.db_to_realtime_daily_buy_list_num = 1
+#
+#             # 매도 리스트 설정 알고리즘 번호
+#             self.sell_list_num = 1
+#             ###################################
+#
+#             # 초기 투자자금
+#             self.start_invest_price = 10000000
+#
+#             # 매수 금액
+#             self.invest_unit = 100000
+#
+#             # 자산 중 최소로 남겨 둘 금액
+#             self.limit_money = 3000000
+#
+#             # 익절 수익률 기준치
+#             self.sell_point = 10
+#
+#             # 손절 수익률 기준치
+#             self.losscut_point = -2
+#
+#             # 실전/모의 봇 돌릴 때 매수하는 순간 종목의 최신 종가 보다 1% 이상 오른 경우 사지 않도록 하는 설정(변경 가능)
+#             self.invest_limit_rate = 1.01
+#             # 실전/모의 봇 돌릴 때 매수하는 순간 종목의 최신 종가 보다 -2% 이하로 떨어진 경우 사지 않도록 하는 설정(변경 가능)
+#             self.invest_min_limit_rate = 0.98
+#
+#             if self.simul_num == 4:
+#                 self.db_to_realtime_daily_buy_list_num = 4
+#                 self.interval_month = 3
+#                 self.invest_unit = 50000
+#
+#             elif self.simul_num == 5:
+#                 self.db_to_realtime_daily_buy_list_num = 5
+#                 self.total_transaction_price = 10000000000
+#                 self.interval_month = 3
+#                 self.vol_mul = 3
+#                 self.d1_diff = 2
+#                 # self.use_min= True
+#                 # self.only_nine_buy = False
+#             elif self.simul_num == 6:
+#                 self.db_to_realtime_daily_buy_list_num = 6

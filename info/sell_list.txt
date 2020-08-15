@@ -1,0 +1,16 @@
+[simulator_func_mysql 파일의 get_sell_list() 함수 아래 대체]
+
+        if self.sell_list_num == 1:
+            if self.op == "real":
+                sql = "SELECT b.code, b.holding_amount, b.rate, b.item_total_purchase FROM all_item_db a, possessed_item b WHERE a.code =b.code and" \
+                      "( a.sell_date is = '%s' or a.sell_date ='%s') and " \
+                      "a.chegyul_check ='%s' " \
+                      "and (b.rate >= '%s' or b.rate <= '%s') group by a.code " \
+
+                sell_list = self.engine_simulator.execute(sql % (0, "", 0, self.sell_point, self.losscut_point)).fetchall()
+            else:
+                # select 할 컬럼은 항상 코드명, 수익률, 매도할 종목의 현재가, 수익(손실)금액
+                # sql 첫 번째 라인은 항상 고정
+                sql = "SELECT code, rate, present_price,valuation_profit FROM all_item_db WHERE (sell_date = '%s') " \
+                      "and (rate>='%s' or rate <= '%s') group by code"
+                sell_list = self.engine_simulator.execute(sql % (0,self.sell_point, self.losscut_point)).fetchall()
